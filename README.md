@@ -4,7 +4,7 @@
 
 ### Запуск
 ```bash
-git clone https://github.com/ImMALWARE/tgmusic_webapp
+git clone https://github.com/ImMALWARE/TGMusic-WebApp
 cd tgmusic_webapp
 npm i
 node index.js
