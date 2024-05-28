@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация Telegram</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <link rel="stylesheet" href="/auth.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+</head>
+<body>
+    <header>
+        <h1>Авторизация</h1>
+    </header>
+    <main>
+        <div id="auth-form">
+            <label for="api-id">API ID</label>
+            <input type="text" id="api-id" name="api-id" required>
+            
+            <label for="api-hash">API Hash</label>
+            <input type="text" id="api-hash" name="api-hash" required>
+            
+            <label for="tg-bot-token">Токен бота Telegram</label>
+            <input type="text" id="tg-bot-token" name="tg-bot-token" required>
+            
+            <label for="tg-channel-id">ID канала Telegram</label>
+            <input type="text" id="tg-channel-id" name="tg-channel-id" required>
+            
+            <button type="button" onclick="login()">Вход</button>
+            <button type="button" onclick="window.open('https://my.telegram.org', '_blank')">Получить API ID и Hash</button>
+            <button type="button" onclick="window.open('https://t.me/BotFather', '_blank')">Получить токен бота</button>
+            <button type="button" onclick="toastr.info('Перешлите этому боту сообщение из канала (кроме треков), бот сообщит ID вашего канала'); setTimeout(() => window.open('https://t.me/myidbot', '_blank'), 4500);">Узнать ID канала Telegram</button>
+
+        </div>
+    </main>
+    <script src="/auth.js"></script>
+</body>
+</html>
