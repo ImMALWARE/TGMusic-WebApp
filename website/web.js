@@ -1,5 +1,3 @@
-if (!$.cookie('bot_token')) window.location = '/auth'
-
 function duration_to_mss(seconds) {
         const h = Math.floor(seconds / 3600);
         const m = Math.floor((seconds % 3600) / 60);
@@ -183,43 +181,46 @@ function logout() {
 const format_size = bytes_size => (Number(bytes_size) / Number(1048576n)).toFixed(2) + " МБ";
 
 const songList = document.getElementById('song-list');
-const events = new EventSource('/api/get_songs');
-events.onmessage = function(event) {
-    const data = JSON.parse(event.data);
-    switch (data.type) {
-        case 'flood_wait':
-            const waiting = document.createElement('h2');
-            waiting.id = 'waiting';
-            let seconds = data.value;
-            songList.appendChild(waiting);
-            timer = setInterval(() => {
-                seconds--;
-                if (seconds >= 0) {
-                    waiting.innerHTML = `Ожидание ${seconds} секунд из-за ограничений ТГ`;
-                } else {
-                    clearInterval(timer);
-                }
-            }, 1000);
-            break;
-        case 'channel_name':
-            channel_name = data.value
-            document.getElementById('channel_name').innerText = channel_name;
-            document.getElementsByTagName('title')[0].innerText = channel_name;
-            try{document.getElementById('waiting').remove();}catch{}
-            try{document.getElementById('circle').remove();}catch{}
-            break;
-        case 'song':
-            const audio = JSON.parse(event.data);
-            const songelem = document.createElement('div');
-            songelem.classList.add('song-item');
-            songelem.id = audio['message_id'];
-            songelem.innerHTML = `<div class="cover-wrapper" onclick="play_song(${audio['message_id']}, '${audio['media']}', '${audio['title']}', '${audio['performer']}')"><img src="https://a-n.vercel.app/${audio['performer']}/${audio['title']}" alt="Cover" class="cover"><svg xmlns="http://www.w3.org/2000/svg" class="downloading" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" width="200" height="200" style="shape-rendering: auto;background: transparent;" xmlns:xlink="http://www.w3.org/1999/xlink"><g><circle stroke-dasharray="207.34511513692632 71.11503837897544" r="44" stroke-width="7" stroke="#ffffff" fill="none" cy="50" cx="50"><animateTransform keyTimes="0;1" values="0 50 50;360 50 50" dur="0.42372881355932207s" repeatCount="indefinite" type="rotate" attributeName="transform"></animateTransform></circle><g></g></g></svg><button class="play-button">▶️</button></div><div class="song-details"><strong class="song-title">${audio['title']}</strong><p class="song-artist">${audio['performer']}</p></div><div class="song-meta"><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24" class="downloaded"><path fill="black" d="m23.5 17l-5 5l-3.5-3.5l1.5-1.5l2 2l3.5-3.5zM6 2c-1.11 0-2 .89-2 2v16c0 1.11.89 2 2 2h7.81c-.53-.91-.81-1.95-.81-3c0-3.31 2.69-6 6-6c.34 0 .67.03 1 .08V8l-6-6m-1 1.5L18.5 9H13Z"/></svg><span class="song-duration">${duration_to_mss(audio['duration'])}</span><span>${format_size(audio['size'])}</span><span class="song-date">${epoch_to_date(audio['date'])}</span><button class="options-button" onclick="download(${audio['message_id']}, '${audio['filename']}', '${audio['media']}')">⬇️</button></div>`
-            songList.appendChild(songelem);
-    }
-};
+if (!$.cookie('bot_token')) window.location = '/auth';
+else {
+    const events = new EventSource('/api/get_songs');
+    events.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        switch (data.type) {
+            case 'flood_wait':
+                const waiting = document.createElement('h2');
+                waiting.id = 'waiting';
+                let seconds = data.value;
+                songList.appendChild(waiting);
+                timer = setInterval(() => {
+                    seconds--;
+                    if (seconds >= 0) {
+                        waiting.innerHTML = `Ожидание ${seconds} секунд из-за ограничений ТГ`;
+                    } else {
+                        clearInterval(timer);
+                    }
+                }, 1000);
+                break;
+            case 'channel_name':
+                channel_name = data.value
+                document.getElementById('channel_name').innerText = channel_name;
+                document.getElementsByTagName('title')[0].innerText = channel_name;
+                try{document.getElementById('waiting').remove();}catch{}
+                try{document.getElementById('circle').remove();}catch{}
+                break;
+            case 'song':
+                const audio = JSON.parse(event.data);
+                const songelem = document.createElement('div');
+                songelem.classList.add('song-item');
+                songelem.id = audio['message_id'];
+                songelem.innerHTML = `<div class="cover-wrapper" onclick="play_song(${audio['message_id']}, '${audio['media']}', '${audio['title']}', '${audio['performer']}')"><img src="https://a-n.vercel.app/${audio['performer']}/${audio['title']}" alt="Cover" class="cover"><svg xmlns="http://www.w3.org/2000/svg" class="downloading" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" width="200" height="200" style="shape-rendering: auto;background: transparent;" xmlns:xlink="http://www.w3.org/1999/xlink"><g><circle stroke-dasharray="207.34511513692632 71.11503837897544" r="44" stroke-width="7" stroke="#ffffff" fill="none" cy="50" cx="50"><animateTransform keyTimes="0;1" values="0 50 50;360 50 50" dur="0.42372881355932207s" repeatCount="indefinite" type="rotate" attributeName="transform"></animateTransform></circle><g></g></g></svg><button class="play-button">▶️</button></div><div class="song-details"><strong class="song-title">${audio['title']}</strong><p class="song-artist">${audio['performer']}</p></div><div class="song-meta"><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24" class="downloaded"><path fill="black" d="m23.5 17l-5 5l-3.5-3.5l1.5-1.5l2 2l3.5-3.5zM6 2c-1.11 0-2 .89-2 2v16c0 1.11.89 2 2 2h7.81c-.53-.91-.81-1.95-.81-3c0-3.31 2.69-6 6-6c.34 0 .67.03 1 .08V8l-6-6m-1 1.5L18.5 9H13Z"/></svg><span class="song-duration">${duration_to_mss(audio['duration'])}</span><span>${format_size(audio['size'])}</span><span class="song-date">${epoch_to_date(audio['date'])}</span><button class="options-button" onclick="download(${audio['message_id']}, '${audio['filename']}', '${audio['media']}')">⬇️</button></div>`
+                songList.appendChild(songelem);
+        }
+    };
 
-events.onerror = function(event) {
-    console.error('Ошибка при получении данных:', event);
-};
+    events.onerror = function(event) {
+        console.error('Ошибка при получении данных:', event);
+    };
 
-events.onclose = (event) => console.log("done");
+    events.onclose = (event) => console.log("done");
+}
